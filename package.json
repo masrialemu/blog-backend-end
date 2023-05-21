@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon App.js"
+    "start": "nodemon App.js",
+    "build": "npm run build"
   },
   "author": "",
   "license": "ISC",
