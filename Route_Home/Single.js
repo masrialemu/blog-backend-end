@@ -7,7 +7,7 @@ const User = require('../Mongoose/Post');
 router.get('/:id',async (req, res) => {
   try {
       const user = await User.findById(req.params.id);
-      await res.json({user:user, name:user.name})
+      await res.json({user:user, name:user.name, email:user.email})
   } catch (error) {
     res.status(400).json({ message: error});
   }

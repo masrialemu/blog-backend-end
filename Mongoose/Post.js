@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
   email: {
     type: String,
-    require
-
+    require:true
   },
   place: {
     type: String,
@@ -12,7 +11,7 @@ const postSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    require,
+    require:true,
     unique: true,
   },
   desc: {

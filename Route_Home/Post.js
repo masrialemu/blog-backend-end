@@ -13,6 +13,7 @@ router.post('/',upload.single('image'), async (req, res) => {
       place:req.body.place,
       title: req.body.title,
       desc: req.body.desc,
+
       // img_url: result.url,
       // img_id:result.public_id,
     });
@@ -24,7 +25,7 @@ router.post('/',upload.single('image'), async (req, res) => {
     }
 
     const save=await post.save();
-    await res.send(post);
+    await res.send(save);
     // fs.unlinkSync(req.file.path)
   } catch (error) {
     console.error(error);

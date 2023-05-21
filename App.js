@@ -12,11 +12,10 @@ const ADelete=require('./Auth/Delete')
 const AEdit=require('./Auth/Edit')
 const AallUser=require('./Auth/AllUser')
 const Aid=require('./Auth/SingleId')
-const Tok=require('./Auth/Tok')
-const Img =require('./Route_Home/Img');
 const path = require('path');
 const PostDelete= require('./Route_Home/Delete')
 const Contact =require('./Auth/Contact')
+const Email =require('./Route_Home/EmailFind')
 require('dotenv/config')
 app.use('/Pic',express.static(path.join(__dirname,'/Pic')))
 // Set up middleware
@@ -36,6 +35,8 @@ app.use('/signin/edit/',AEdit)
 app.use('/signin/all',AallUser)
 app.use('/signin/id/',Aid)
 app.use('/contact',Contact)
+app.use('/findbyemail/',Email)
+
 // app.use('/signin/token',Tok)
 //users/:id
 app.listen(5000, () => {
