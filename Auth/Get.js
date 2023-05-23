@@ -60,6 +60,8 @@ router.post('/', async (req, res) => {
     );
 
     // Return token and user data
+    // req.session.userId = user._id;
+ 
     res.status(200).json({ token, user: { id: user._id, email: user.email, name:user.name ,pic:user.public_url, isadmin:user.isAdmin} });
   } catch (error) {
     console.error(error);
