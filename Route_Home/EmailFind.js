@@ -4,11 +4,11 @@ const User = require('../Mongoose/Post');
 
 router.get('/:email', async (req, res) => {
   
-        const userEmail = req.params.email;
-      
+        const userEmail = req.params.email
+       
         try {
           const posts = await User.find({ email: userEmail }).exec();
-          res.json(posts);
+          res.status(200).json(posts);
         } catch (err) {
           console.error(err);
           res.status(500).send('An error occurred');
