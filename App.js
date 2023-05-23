@@ -54,7 +54,7 @@ app.use('/signup', Signup);
 app.use('/signin', Signin);
 app.use('/signin/delete/', ADelete);
 app.use('/signin/edit/', AEdit);
-app.use('/signin/all', AallUser);
+// app.use('/signin/all', AallUser);
 app.use('/signin/id/', Aid);
 app.use('/contact', Contact);
 app.use('/findbyemail/', Email);
