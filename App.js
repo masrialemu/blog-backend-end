@@ -1,7 +1,6 @@
 // const session = require('express-session');
 // const MongoStore = require('connect-mongodb-session')(session);
 const express = require('express');
-const Pusher = require("pusher");
 const app = express();
 const core = require('cors');
 const mongoose = require('mongoose');
@@ -40,9 +39,7 @@ app.use(core());
 
 
 
-pusher.trigger("my-channel", "my-event", {
-  message: "hello world"
-});
+
 mongoose
   .connect(process.env.Pass, { useNewUrlParser: true })
   .then(() => console.log('db is connected'))
