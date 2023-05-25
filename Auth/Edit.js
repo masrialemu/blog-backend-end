@@ -4,14 +4,7 @@ const User = require('../Mongoose/Auth');
 const Token = require('../Token');
 const bcrypt = require('bcrypt');
 const upload = require('../Route_Home/Multer');
-const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
-
-cloudinary.config({
-  cloud_name: process.env.cloud_name,
-  api_key: process.env.api_key,
-  api_secret: process.env.api_secret
-});
 
 // Edit user info
 router.put('/:id', Token, upload.single('image'), async (req, res) => {
@@ -40,17 +33,16 @@ router.put('/:id', Token, upload.single('image'), async (req, res) => {
     }
 
     if (req.file) {
-      // Delete the previous profile image from Cloudinary if it exists
-      if (user.public_url) {
-        await cloudinary.uploader.destroy(user.public_url);
+      // Delete the previous profile image if it exists
+      if (user.image) {
+        fs.unlinkSync(user.image);
       }
 
-      // Upload the new profile image to Cloudinary
-      const result = await cloudinary.uploader.upload(req.file.path);
-      updatedFields.public_url = result.secure_url;
+      // Move the uploaded image to the "Pic" folder
+      const imagePath = `Pic/${req.file.filename}`;
+      fs.renameSync(req.file.path, imagePath);
 
-      // Remove the local file after uploading to Cloudinary
-      fs.unlinkSync(req.file.path);
+      updatedFields.image = imagePath;
     }
 
     if (req.userId.isAdmin) {

@@ -3,14 +3,9 @@ const router = express.Router();
 const User = require('../Mongoose/Post');
 const Token = require('../Token');
 const upload = require('../Route_Home/Multer');
-const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
-cloudinary.config({
-  cloud_name: process.env.cloud_name,
-  api_key: process.env.api_key,
-  api_secret: process.env.api_secret
-});
+const basePath = 'localhost:5000';
 
 router.put('/:id', Token, upload.single('image'), async (req, res) => {
   try {
@@ -28,17 +23,16 @@ router.put('/:id', Token, upload.single('image'), async (req, res) => {
     let updatedFields = { place, title, desc };
 
     if (req.file) {
-      // Delete the previous image from Cloudinary if it exists
+      // Delete the previous image file if it exists
       if (user.public_url) {
-        await cloudinary.uploader.destroy(user.public_url);
+        fs.unlinkSync(`Pic/${user.public_url}`);
       }
 
-      // Upload the new image to Cloudinary
-      const result = await cloudinary.uploader.upload(req.file.path);
-      updatedFields.public_url = result.secure_url;
-      
-      // Remove the local file after uploading to Cloudinary
-      fs.unlinkSync(req.file.path);
+      // Move the uploaded image to the "Pic" folder
+      const imagePath = `Pic/${req.file.filename}`;
+      fs.renameSync(req.file.path, imagePath);
+
+      updatedFields.public_url = imagePath;
     }
 
     // Update the user's post
