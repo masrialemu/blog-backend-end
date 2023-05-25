@@ -4,6 +4,13 @@ const Post = require('../Mongoose/Post');
 const Auth = require('../Mongoose/Auth');
 const upload = require('../Route_Home/Multer');
 const Token = require('../Token');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret
+});
 
 router.post('/:id', Token, upload.single('image'), async (req, res) => {
   try {
@@ -22,13 +29,14 @@ router.post('/:id', Token, upload.single('image'), async (req, res) => {
     });
 
     if (req.file) {
-      // Save the file locally and get the path
-      const filePath = req.file.path;
-      post.public_url = filePath; // Assign the local file path to the post
+      // Upload the image to Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path);
+
+      post.public_url = result.secure_url; // Assign the Cloudinary URL to the post
     }
 
     const savedPost = await post.save();
-
+    fs.unlinkSync(req.file.path);
     return res.send(savedPost); // Send the response
   } catch (error) {
     console.error(error);
