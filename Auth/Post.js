@@ -27,14 +27,18 @@ router.post('/', Multer.single('image'), async (req, res) => {
     });
 
     if (req.file) {
-      const imagePath = `Pic/${req.file.filename}`;
-
-      // Move the uploaded image to the "Pic" folder
-      fs.renameSync(req.file.path, imagePath);
-
-      // Use localhost URL for image path
-      user.public_url = `http://localhost:5000/${imagePath}`;
+      user.public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${req.file.filename}`; // Assign the correct image URL to the post
     }
+
+    // if (req.file) {
+    //   const imagePath = `Pic/${req.file.filename}`;
+
+    //   // Move the uploaded image to the "Pic" folder
+    //   fs.renameSync(req.file.path, imagePath);
+
+    //   // Use localhost URL for image path
+    //   user.public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${imagePath}`;
+    // }
 
     await user.save();
 

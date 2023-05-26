@@ -31,7 +31,7 @@ router.put('/:id', Token, upload.single('image'), async (req, res) => {
       }
       
       const public_url = req.file.path;
-      updatedFields.public_url = `http://localhost:5000/${public_url}`;
+      updatedFields.public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${public_url}`;
     }
 
     // Update the post

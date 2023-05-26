@@ -15,7 +15,9 @@ const postSchema = new mongoose.Schema({
     unique: true,
   },
   desc: {
-    type: String
+    type: String,
+    default: ''
+
   },
   public_url: {
       type: String,

@@ -47,7 +47,7 @@ router.put('/:id', Token, Multer.single('image'), async (req, res) => {
       }
 
       const imagePath = `Pic/${req.file.filename}`;
-      const public_url = `http://localhost:5000/${imagePath}`;
+      const public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${imagePath}`;
       fs.renameSync(req.file.path, imagePath);
 
       updatedFields.public_url = public_url;
