@@ -22,7 +22,7 @@ router.post('/:id', Token, upload.single('image'), async (req, res) => {
     });
 
     if (req.file) {
-      post.public_url = `/static/Pic/${req.file.filename}`; // Assign the correct image URL to the post
+      post.public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${req.file.filename}`; // Assign the correct image URL to the post
     }
 
     const savedPost = await post.save();

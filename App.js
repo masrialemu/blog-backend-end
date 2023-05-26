@@ -39,7 +39,7 @@ app.use('/signin/id/', Aid);
 app.use('/contact', Contact);
 app.use('/findbyemail/', Email);
 
-app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use('/Pic', express.static(path.join(__dirname, '/Pic')));
 
 app.listen(5000, () => {
   console.log(`Server started on port 5000`);
