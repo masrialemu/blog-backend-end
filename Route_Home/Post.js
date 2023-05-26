@@ -24,7 +24,7 @@ router.post('/:id', Token, upload.single('image'), async (req, res) => {
 
     if (req.file) {
       // Move the uploaded image to a permanent location on the server
-      const imagePath = `Pic/${req.file.filename}`;
+      const imagePath = `${req.file.filename}`;
       fs.renameSync(req.file.path, imagePath);
 
       post.public_url = `http://localhost:5000/${imagePath}`; // Assign the local server URL to the post

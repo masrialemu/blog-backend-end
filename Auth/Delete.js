@@ -14,8 +14,10 @@ router.delete('/:id', Token, async (req, res) => {
       }
 
       // Delete the local image file
-      if (user.image) {
-        fs.unlinkSync(user.image);
+      if (user.public_url) {
+        const fileName = user.public_url.split('/').pop();
+        const imagePath = `Pic/${fileName}`;
+        fs.unlinkSync(imagePath);
       }
 
       // Delete the user from the database

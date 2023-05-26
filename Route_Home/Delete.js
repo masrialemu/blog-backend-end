@@ -4,6 +4,7 @@ const User = require('../Mongoose/Post');
 const Auth = require('../Mongoose/Auth');
 const Token = require('../Token');
 const fs = require('fs');
+const path = require('path');
 
 router.delete('/:id', Token, async (req, res) => {
   try {
@@ -15,7 +16,11 @@ router.delete('/:id', Token, async (req, res) => {
 
       // Delete the associated image file
       if (user.public_url) {
-        fs.unlinkSync(user.public_url);
+        // Extract the file name from the public_url
+        const fileName = path.basename(user.public_url);
+        
+        // Delete the previous image file if it exists
+        fs.unlinkSync(`Pic/${fileName}`);
       }
 
       return res.status(200).json({ user, message: 'User is deleted' });
