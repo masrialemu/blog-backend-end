@@ -19,7 +19,7 @@ const PostDelete = require('./Route_Home/Delete');
 const Contact = require('./Auth/Contact');
 const Email = require('./Route_Home/EmailFind');
 require('dotenv/config');
-app.use('/Pic', express.static(path.join(__dirname, '/Pic')));
+//app.use('/Pic', express.static(path.join(__dirname, '/Pic')));
 // Set up middleware
 app.use(express.json());
 app.use(core());

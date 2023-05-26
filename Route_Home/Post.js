@@ -4,7 +4,9 @@ const Post = require('../Mongoose/Post');
 const Auth = require('../Mongoose/Auth');
 const upload = require('../Route_Home/Multer');
 const Token = require('../Token');
-const fs = require('fs');
+const path = require('path');
+
+router.use('/static', express.static(path.join(__dirname, '..', 'static')));
 
 router.post('/:id', Token, upload.single('image'), async (req, res) => {
   try {
@@ -23,11 +25,7 @@ router.post('/:id', Token, upload.single('image'), async (req, res) => {
     });
 
     if (req.file) {
-      // Move the uploaded image to a permanent location on the server
-      const imagePath = `${req.file.filename}`;
-      fs.renameSync(req.file.path, imagePath);
-
-      post.public_url = `http://localhost:5000/${imagePath}`; // Assign the local server URL to the post
+      post.public_url = `/static/Pic/${req.file.filename}`; // Assign the correct image URL to the post
     }
 
     const savedPost = await post.save();
