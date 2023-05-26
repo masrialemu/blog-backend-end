@@ -6,13 +6,10 @@ const upload = require('../Route_Home/Multer');
 const Token = require('../Token');
 const path = require('path');
 
-router.use('/static', express.static(path.join(__dirname, '..', 'static')));
-
 router.post('/:id', Token, upload.single('image'), async (req, res) => {
   try {
     const user = await Auth.findById(req.params.id);
 
-    // Check if the authenticated user is the owner of the post
     if (!user || user.email !== req.userId.email) {
       return res.status(403).json({ message: 'Unauthorized' });
     }
@@ -30,7 +27,7 @@ router.post('/:id', Token, upload.single('image'), async (req, res) => {
 
     const savedPost = await post.save();
 
-    return res.send(savedPost); // Send the response
+    return res.send(savedPost);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');

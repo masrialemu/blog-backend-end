@@ -1,5 +1,3 @@
-// const session = require('express-session');
-// const MongoStore = require('connect-mongodb-session')(session);
 const express = require('express');
 const app = express();
 const core = require('cors');
@@ -19,26 +17,9 @@ const PostDelete = require('./Route_Home/Delete');
 const Contact = require('./Auth/Contact');
 const Email = require('./Route_Home/EmailFind');
 require('dotenv/config');
-//app.use('/Pic', express.static(path.join(__dirname, '/Pic')));
-// Set up middleware
+
 app.use(express.json());
 app.use(core());
-// const store = new MongoStore({
-//   uri: 'mongodb://localhost:27017/sessionstore',
-//   collection: 'sessions',
-// });
-// app.use(
-//   session({
-//     secret: 'Masri404',
-//     resave: false,
-//     saveUninitialized: false,
-//     store: store,
-//   })
-// );
-
-
-
-
 
 mongoose
   .connect(process.env.Pass, { useNewUrlParser: true })
@@ -54,10 +35,11 @@ app.use('/signup', Signup);
 app.use('/signin', Signin);
 app.use('/signin/delete/', ADelete);
 app.use('/signin/edit/', AEdit);
-// app.use('/signin/all', AallUser);
 app.use('/signin/id/', Aid);
 app.use('/contact', Contact);
 app.use('/findbyemail/', Email);
+
+app.use('/static', express.static(path.join(__dirname, 'static')));
 
 app.listen(5000, () => {
   console.log(`Server started on port 5000`);
