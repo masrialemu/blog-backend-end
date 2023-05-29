@@ -22,6 +22,10 @@ const postSchema = new mongoose.Schema({
   public_url: {
       type: String,
       default: ''
+  },
+  public_name:{
+    type: String,
+    default: ''
   }
 }, {
   timestamps: true
