@@ -6,11 +6,30 @@ const bcrypt = require('bcrypt');
 const Multer = require('../Route_Home/Multer');
 const fs = require('fs');
 const path = require('path');
+const multer=require('multer')
 
+const upload = multer({ dest: 'Pic' });
+
+async function uploadImageToImgBB(imagePath) {
+  const uploadImageToImgBB = async (imagePath) => {
+    try {
+      const formData = new FormData();
+      formData.append('image', fs.createReadStream(imagePath));
+      formData.append('key', 'bb3c04e726776d171fb92035dfb747cf');
+  
+      const response = await axios.post('https://api.imgbb.com/1/upload', formData, {
+        headers: formData.getHeaders(),
+      });
+  
+      return response.data.data.url;
+    } catch (error) {
+      console.error('Error uploading image to ImgBB:', error.message);
+      throw error;
+    }
+  };
+}
 // Edit user info
-// Edit user info
-// Edit user info
-router.put('/:id', Token, Multer.single('image'), async (req, res) => {
+router.put('/:id', Token, upload.single('image'), async (req, res) => {
   try {
     const { name, password, isAdmin, email } = req.body;
     const userId = req.userId;
@@ -36,21 +55,11 @@ router.put('/:id', Token, Multer.single('image'), async (req, res) => {
     }
 
     if (req.file) {
-      if (user.public_url) {
-        const fileName = path.basename(user.public_url);
-        const filePath = path.join(__dirname, '..', 'Pic', fileName);
+      const imgUrl = await uploadImageToImgBB(req.file.path);
+      updatedFields.public_url = imgUrl;
 
-        // Check if the file exists before deleting
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
-      }
-
-      const imagePath = `Pic/${req.file.filename}`;
-      const public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${imagePath}`;
-      fs.renameSync(req.file.path, imagePath);
-
-      updatedFields.public_url = public_url;
+      // Delete the local file after uploading
+      fs.unlinkSync(req.file.path);
     }
 
     if (userId.isAdmin) {

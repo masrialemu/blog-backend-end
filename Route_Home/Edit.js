@@ -2,9 +2,28 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../Mongoose/Post');
 const Token = require('../Token');
-const upload = require('../Route_Home/Multer');
+const multer = require('multer');
 const fs = require('fs');
-const path = require('path');
+const axios = require('axios');
+const FormData = require('form-data');
+const upload = multer({ dest: 'Pic' });
+
+const uploadImageToImgBB = async (imagePath) => {
+  try {
+    const formData = new FormData();
+    formData.append('image', fs.createReadStream(imagePath));
+    formData.append('key', 'bb3c04e726776d171fb92035dfb747cf');
+
+    const response = await axios.post('https://api.imgbb.com/1/upload', formData, {
+      headers: formData.getHeaders(),
+    });
+
+    return response.data.data.url;
+  } catch (error) {
+    console.error('Error uploading image to ImgBB:', error.message);
+    throw error;
+  }
+};
 
 router.put('/:id', Token, upload.single('image'), async (req, res) => {
   try {
@@ -22,16 +41,17 @@ router.put('/:id', Token, upload.single('image'), async (req, res) => {
     let updatedFields = { place, title, desc };
 
     if (req.file) {
-      if (post.public_url) {
-        // Extract the file name from the public_url
-        const fileName = path.basename(post.public_url);
-        
-        // Delete the previous image file if it exists
-        fs.unlinkSync(`Pic/${fileName}`);
-      }
-      
-      const public_url = req.file.path;
-      updatedFields.public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${public_url}`;
+      // Delete the previous image if it exists
+      // if (post.public_url) {
+      //   fs.unlinkSync(post.public_url);
+      // }
+
+      // Upload the new image to ImgBB
+      const imgUrl = await uploadImageToImgBB(req.file.path);
+      updatedFields.public_url = imgUrl;
+
+      // Delete the local file after uploading
+      fs.unlinkSync(req.file.path);
     }
 
     // Update the post

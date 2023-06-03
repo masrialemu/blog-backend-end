@@ -2,14 +2,11 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../Mongoose/Post');
 const Auth = require('../Mongoose/Auth');
-const uploads = require('../Route_Home/Multer');
-const Token = require('../Token');
-const path = require('path');
 const multer = require('multer');
+const Token = require('../Token');
 const axios = require('axios');
 const FormData = require('form-data');
 const fs = require('fs');
-
 
 const upload = multer({ dest: 'Pic' });
 
@@ -31,31 +28,34 @@ async function uploadImageToImgBB(imagePath) {
 }
 
 router.post('/:id', Token, upload.single('image'), async (req, res) => {
- 
-
   try {
+    const userId = req.userId;
     const user = await Auth.findById(req.params.id);
 
-    if (!user || user.email !== req.userId.email) {
+    if (!user || user.email !== userId.email) {
       return res.status(403).json({ message: 'Unauthorized' });
     }
 
+    const { email, place, title, desc } = req.body;
+
     const post = new Post({
-      email: req.body.email,
-      place: req.body.place,
-      title: req.body.title,
-      desc: req.body.desc,
+      email,
+      place,
+      title,
+      desc,
     });
 
     if (req.file) {
       const imageUrl = await uploadImageToImgBB(req.file.path);
       const imageName = req.file.originalname;
-      post.public_url = imageUrl; 
-      post.public_name=imageName
+      post.public_url = imageUrl;
+      post.public_name = imageName;
+
+      fs.unlinkSync(req.file.path);
     }
-  
+
     const savedPost = await post.save();
-    fs.unlinkSync(req.file.path); 
+
     return res.send(savedPost);
   } catch (error) {
     console.error(error);
@@ -64,48 +64,3 @@ router.post('/:id', Token, upload.single('image'), async (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
-
-
-
-
-// const express = require('express');
-// const router = express.Router();
-// const Post = require('../Mongoose/Post');
-// const Auth = require('../Mongoose/Auth');
-// const upload = require('../Route_Home/Multer');
-// const Token = require('../Token');
-// const path = require('path');
-
-// router.post('/:id', Token, upload.single('image'), async (req, res) => {
-//   try {
-//     const user = await Auth.findById(req.params.id);
-
-//     if (!user || user.email !== req.userId.email) {
-//       return res.status(403).json({ message: 'Unauthorized' });
-//     }
-
-//     const post = new Post({
-//       email: req.body.email,
-//       place: req.body.place,
-//       title: req.body.title,
-//       desc: req.body.desc,
-//     });
-
-//     if (req.file) {
-//       post.public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${req.file.filename}`; // Assign the correct image URL to the post
-//     }
-
-//     const savedPost = await post.save();
-
-//     return res.send(savedPost);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Server error');
-//   }
-// });
-
-// module.exports = router;

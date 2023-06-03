@@ -30,7 +30,7 @@ mongoose
 app.use('/upload', Upload);
 app.use('/posts/', Post);
 app.use('/getpost', getPost);
-app.use('/getdelete', PostDelete);
+app.use('/getdelete/', PostDelete);
 app.use('/sgetpost/', sgetPost);
 app.use('/getedit/', GetEdit);
 app.use('/signup', Signup);

@@ -4,11 +4,30 @@ const User = require('../Mongoose/Auth');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const Multer = require('../Route_Home/Multer');
+const multer = require('multer');
 const path = require('path');
+const axios = require('axios');
+const FormData = require('form-data');
+const upload = multer({ dest: 'Pic' });
 
-// Signup route
-router.post('/', Multer.single('image'), async (req, res) => {
+async function uploadImageToImgBB(imagePath) {
+  try {
+    const formData = new FormData();
+    formData.append('image', fs.createReadStream(imagePath));
+    formData.append('key', 'bb3c04e726776d171fb92035dfb747cf');
+
+    const response = await axios.post('https://api.imgbb.com/1/upload', formData, {
+      headers: formData.getHeaders(),
+    });
+
+    return response.data.data.url;
+  } catch (error) {
+    console.error('Error uploading image to ImgBB:', error.message);
+    throw error;
+  }
+}
+
+router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { name, email, password, admin } = req.body;
     const userExists = await User.findOne({ email });
@@ -27,18 +46,12 @@ router.post('/', Multer.single('image'), async (req, res) => {
     });
 
     if (req.file) {
-      user.public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${req.file.filename}`; // Assign the correct image URL to the post
+      const imageUrl = await uploadImageToImgBB(req.file.path);
+      const imageName = req.file.originalname;
+      user.public_url = imageUrl; 
+      user.public_name = imageName;
+      fs.unlinkSync(req.file.path);
     }
-
-    // if (req.file) {
-    //   const imagePath = `Pic/${req.file.filename}`;
-
-    //   // Move the uploaded image to the "Pic" folder
-    //   fs.renameSync(req.file.path, imagePath);
-
-    //   // Use localhost URL for image path
-    //   user.public_url = `https://blog-backend-end-m4rj.onrender.com/Pic/${imagePath}`;
-    // }
 
     await user.save();
 
@@ -47,6 +60,7 @@ router.post('/', Multer.single('image'), async (req, res) => {
       '@Masri404',
       { expiresIn: '1h' }
     );
+
     res.status(201).json({ token });
   } catch (err) {
     console.error(err);
